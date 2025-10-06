@@ -1,0 +1,78 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#FEF3C7"/>
+  
+  <!-- Motorcycle silhouette -->
+  <g transform="translate(50, 120)">
+    <!-- Main body/fuel tank -->
+    <ellipse cx="150" cy="40" rx="45" ry="20" fill="#F59E0B"/>
+    
+    <!-- Seat -->
+    <ellipse cx="120" cy="35" rx="25" ry="8" fill="#92400E"/>
+    
+    <!-- Handlebars -->
+    <rect x="180" y="25" width="30" height="4" fill="#374151" rx="2"/>
+    <circle cx="185" cy="27" r="3" fill="#6B7280"/>
+    <circle cx="205" cy="27" r="3" fill="#6B7280"/>
+    
+    <!-- Front fork -->
+    <rect x="195" y="29" width="3" height="35" fill="#374151"/>
+    
+    <!-- Engine -->
+    <rect x="130" y="45" width="35" height="25" fill="#6B7280" rx="3"/>
+    
+    <!-- Exhaust pipe -->
+    <rect x="165" y="55" width="40" height="6" fill="#9CA3AF" rx="3"/>
+    <rect x="200" y="58" width="8" height="8" fill="#4B5563" rx="4"/>
+    
+    <!-- Front wheel -->
+    <circle cx="200" cy="80" r="25" fill="#1F2937"/>
+    <circle cx="200" cy="80" r="18" fill="#374151"/>
+    <circle cx="200" cy="80" r="12" fill="#6B7280"/>
+    <!-- Spokes -->
+    <g stroke="#9CA3AF" stroke-width="1">
+      <line x1="185" y1="80" x2="215" y2="80"/>
+      <line x1="200" y1="65" x2="200" y2="95"/>
+      <line x1="189" y1="69" x2="211" y2="91"/>
+      <line x1="211" y1="69" x2="189" y2="91"/>
+    </g>
+    
+    <!-- Rear wheel -->
+    <circle cx="100" cy="80" r="25" fill="#1F2937"/>
+    <circle cx="100" cy="80" r="18" fill="#374151"/>
+    <circle cx="100" cy="80" r="12" fill="#6B7280"/>
+    <!-- Spokes -->
+    <g stroke="#9CA3AF" stroke-width="1">
+      <line x1="85" y1="80" x2="115" y2="80"/>
+      <line x1="100" y1="65" x2="100" y2="95"/>
+      <line x1="89" y1="69" x2="111" y2="91"/>
+      <line x1="111" y1="69" x2="89" y2="91"/>
+    </g>
+    
+    <!-- Chain -->
+    <ellipse cx="150" cy="85" rx="50" ry="3" fill="#4B5563"/>
+    
+    <!-- Frame connecting parts -->
+    <line x1="120" y1="45" x2="100" y2="65" stroke="#F59E0B" stroke-width="4"/>
+    <line x1="150" y1="50" x2="200" y2="65" stroke="#F59E0B" stroke-width="4"/>
+    <line x1="150" y1="50" x2="100" y2="65" stroke="#F59E0B" stroke-width="4"/>
+    
+    <!-- Headlight -->
+    <circle cx="210" cy="35" r="8" fill="#FEF3C7"/>
+    <circle cx="210" cy="35" r="5" fill="#FBBF24"/>
+    
+    <!-- Rear light -->
+    <circle cx="80" cy="45" r="4" fill="#FCA5A5"/>
+    
+    <!-- License plate -->
+    <rect x="75" y="90" width="20" height="8" fill="#FFFFFF" stroke="#374151" stroke-width="1"/>
+    <text x="85" y="96" text-anchor="middle" fill="#374151" font-family="Arial, sans-serif" font-size="4" font-weight="bold">BIKE</text>
+  </g>
+  
+  <!-- Text -->
+  <text x="200" y="220" text-anchor="middle" fill="#F59E0B" font-family="Arial, sans-serif" font-size="16" font-weight="600">
+    Bike Rental
+  </text>
+  <text x="200" y="240" text-anchor="middle" fill="#6B7280" font-family="Arial, sans-serif" font-size="12">
+    Two-wheeler service
+  </text>
+</svg>

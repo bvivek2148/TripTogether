@@ -1,0 +1,11 @@
+node_modules
+.next
+.env
+.env.local
+*.db
+*.db-journal
+.qodo
+docs
+README.md
+TEST_CREDENTIALS.md
+PROFESSIONAL_WEBSITE_GUIDE.md

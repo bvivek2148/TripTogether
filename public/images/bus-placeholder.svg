@@ -1,0 +1,49 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#F0FDF4"/>
+  
+  <!-- Bus silhouette -->
+  <g transform="translate(30, 80)">
+    <!-- Bus body -->
+    <rect x="20" y="40" width="300" height="80" fill="#10B981" rx="8"/>
+    
+    <!-- Windows -->
+    <rect x="30" y="20" width="280" height="25" fill="#D1FAE5" rx="4"/>
+    
+    <!-- Individual windows -->
+    <rect x="40" y="25" width="25" height="15" fill="#A7F3D0"/>
+    <rect x="75" y="25" width="25" height="15" fill="#A7F3D0"/>
+    <rect x="110" y="25" width="25" height="15" fill="#A7F3D0"/>
+    <rect x="145" y="25" width="25" height="15" fill="#A7F3D0"/>
+    <rect x="180" y="25" width="25" height="15" fill="#A7F3D0"/>
+    <rect x="215" y="25" width="25" height="15" fill="#A7F3D0"/>
+    <rect x="250" y="25" width="25" height="15" fill="#A7F3D0"/>
+    <rect x="285" y="25" width="15" height="15" fill="#A7F3D0"/>
+    
+    <!-- Door -->
+    <rect x="25" y="50" width="20" height="60" fill="#059669"/>
+    <rect x="27" y="55" width="16" height="50" fill="#6EE7B7"/>
+    <circle cx="40" cy="80" r="2" fill="#047857"/>
+    
+    <!-- Wheels -->
+    <circle cx="70" cy="130" r="15" fill="#1F2937"/>
+    <circle cx="70" cy="130" r="8" fill="#4B5563"/>
+    <circle cx="270" cy="130" r="15" fill="#1F2937"/>
+    <circle cx="270" cy="130" r="8" fill="#4B5563"/>
+    
+    <!-- Headlights -->
+    <rect x="315" y="60" width="8" height="12" fill="#FEF3C7" rx="2"/>
+    <rect x="315" y="80" width="8" height="12" fill="#FEF3C7" rx="2"/>
+    
+    <!-- Side details -->
+    <rect x="60" y="70" width="200" height="2" fill="#047857"/>
+    <rect x="60" y="90" width="200" height="2" fill="#047857"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="200" y="220" text-anchor="middle" fill="#10B981" font-family="Arial, sans-serif" font-size="16" font-weight="600">
+    Bus Service
+  </text>
+  <text x="200" y="240" text-anchor="middle" fill="#6B7280" font-family="Arial, sans-serif" font-size="12">
+    Group travel solution
+  </text>
+</svg>

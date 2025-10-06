@@ -1,0 +1,561 @@
+// TripTogether Database Schema
+// Comprehensive transportation platform with cab rental and bus hiring features
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// USER MANAGEMENT & AUTHENTICATION
+// ============================================================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  phone         String?
+  dateOfBirth   DateTime?
+  address       String?
+  city          String?
+  state         String?
+  zipCode       String?
+  country       String?   @default("US")
+
+  // User preferences
+  preferredLanguage String @default("en")
+  currency          String @default("USD")
+  timezone          String @default("UTC")
+
+  // Account status
+  isActive      Boolean   @default(true)
+  isVerified    Boolean   @default(false)
+  role          UserRole  @default(USER)
+
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts      Account[]
+  sessions      Session[]
+  bookings      Booking[]
+  reviews       Review[]
+  favorites     UserFavorite[]
+  notifications UserNotification[]
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  DRIVER
+  FLEET_MANAGER
+}
+
+// ============================================================================
+// VEHICLE MANAGEMENT
+// ============================================================================
+
+model Vehicle {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  type        VehicleType
+  category    VehicleCategory
+
+  // Capacity and specifications
+  capacity    Int
+  doors       Int?
+  transmission String?    // "automatic", "manual"
+  fuelType    String?    // "petrol", "diesel", "electric", "hybrid"
+
+  // Pricing
+  hourlyRate  Float
+  dailyRate   Float
+  weeklyRate  Float?
+
+  // Vehicle details
+  make        String
+  model       String
+  year        Int
+  color       String?
+  licensePlate String    @unique
+
+  // Features and amenities
+  features    String?   // JSON string of features
+  images      String?   // JSON string of image URLs
+
+  // Location and availability
+  location    String
+  latitude    Float?
+  longitude   Float?
+
+  // Status
+  status      VehicleStatus @default(AVAILABLE)
+  isActive    Boolean       @default(true)
+
+  // Maintenance
+  lastServiceDate DateTime?
+  nextServiceDate DateTime?
+  mileage         Int?
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  amenities   VehicleAmenityMapping[]
+  bookings    Booking[]
+  reviews     Review[]
+  favorites   UserFavorite[]
+
+  @@map("vehicles")
+}
+
+model VehicleAmenity {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  category    AmenityCategory
+  priceModifier Float // Percentage modifier (e.g., 10.00 for 10%)
+  icon        String?  // Icon name or URL
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  vehicles    VehicleAmenityMapping[]
+  bookings    BookingAmenity[]
+
+  @@map("vehicle_amenities")
+}
+
+model VehicleAmenityMapping {
+  id        String @id @default(cuid())
+  vehicleId String
+  amenityId String
+
+  vehicle   Vehicle        @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  amenity   VehicleAmenity @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+
+  @@unique([vehicleId, amenityId])
+  @@map("vehicle_amenity_mappings")
+}
+
+enum VehicleType {
+  CAB
+  BUS
+  BIKE
+}
+
+enum VehicleCategory {
+  // Cab categories
+  ECONOMY_CAB
+  STANDARD_CAB
+  PREMIUM_CAB
+  LUXURY_CAB
+
+  // Bus categories
+  MINI_BUS      // 8-15 seats
+  STANDARD_BUS  // 16-35 seats
+  LARGE_BUS     // 36+ seats
+  LUXURY_BUS
+
+  // Bike categories
+  STANDARD_BIKE    // Regular motorcycles
+  SPORTS_BIKE      // High-performance bikes
+  CRUISER_BIKE     // Comfortable long-distance bikes
+  SCOOTER          // Automatic scooters
+  ELECTRIC_BIKE    // Electric two-wheelers
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  BOOKED
+  MAINTENANCE
+  OUT_OF_SERVICE
+}
+
+enum AmenityCategory {
+  CLIMATE_CONTROL
+  CONNECTIVITY
+  ENTERTAINMENT
+  COMFORT
+  STORAGE
+  ACCESSIBILITY
+  SAFETY
+}
+
+// ============================================================================
+// BOOKING MANAGEMENT
+// ============================================================================
+
+model Booking {
+  id              String        @id @default(cuid())
+  bookingReference String       @unique
+  userId          String
+  vehicleId       String
+
+  // Trip details
+  startDateTime   DateTime
+  endDateTime     DateTime
+  pickupLocation  String
+  dropoffLocation String?
+  pickupLatitude  Float?
+  pickupLongitude Float?
+  dropoffLatitude Float?
+  dropoffLongitude Float?
+
+  // Pricing
+  basePrice       Float
+  amenityPrice    Float @default(0)
+  taxAmount       Float @default(0)
+  discountAmount  Float @default(0)
+  totalCost       Float
+
+  // Booking details
+  passengerCount  Int           @default(1)
+  specialRequests String?
+  notes           String?
+
+  // Status and tracking
+  status          BookingStatus @default(PENDING_PAYMENT)
+  paymentStatus   PaymentStatus @default(PENDING)
+  paymentIntentId String?       // Stripe payment intent ID
+
+  // Cancellation
+  cancellationReason String?
+  cancellationDate   DateTime?
+  refundAmount       Float?
+
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  user            User          @relation(fields: [userId], references: [id])
+  vehicle         Vehicle       @relation(fields: [vehicleId], references: [id])
+  routes          BookingRoute[]
+  amenities       BookingAmenity[]
+  payments        Payment[]
+  notifications   BookingNotification[]
+
+  @@map("bookings")
+}
+
+model BookingRoute {
+  id          String   @id @default(cuid())
+  bookingId   String
+  stopOrder   Int
+  location    String
+  latitude    Float?
+  longitude   Float?
+  estimatedTime DateTime?
+  actualTime    DateTime?
+
+  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@unique([bookingId, stopOrder])
+  @@map("booking_routes")
+}
+
+model BookingAmenity {
+  id        String @id @default(cuid())
+  bookingId String
+  amenityId String
+  quantity  Int    @default(1)
+  price     Float
+
+  booking   Booking        @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  amenity   VehicleAmenity @relation(fields: [amenityId], references: [id])
+
+  @@unique([bookingId, amenityId])
+  @@map("booking_amenities")
+}
+
+enum BookingStatus {
+  DRAFT
+  PENDING_PAYMENT
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+// ============================================================================
+// PAYMENT MANAGEMENT
+// ============================================================================
+
+model Payment {
+  id              String        @id @default(cuid())
+  bookingId       String
+  amount          Float
+  currency        String        @default("USD")
+  paymentMethod   PaymentMethod
+
+  // Stripe integration
+  stripePaymentIntentId String?
+  stripeChargeId        String?
+
+  // Payment details
+  status          PaymentStatus @default(PENDING)
+  failureReason   String?
+  refundReason    String?
+  refundAmount    Float?
+
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  paidAt          DateTime?
+  refundedAt      DateTime?
+
+  // Relations
+  booking         Booking       @relation(fields: [bookingId], references: [id])
+
+  @@map("payments")
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  PAYPAL
+  APPLE_PAY
+  GOOGLE_PAY
+  BANK_TRANSFER
+}
+
+// ============================================================================
+// REVIEWS AND RATINGS
+// ============================================================================
+
+model Review {
+  id          String   @id @default(cuid())
+  userId      String
+  vehicleId   String
+  bookingId   String?  // Optional link to specific booking
+
+  // Ratings (1-5 scale)
+  overallRating    Int
+  vehicleRating    Int?
+  driverRating     Int?
+  serviceRating    Int?
+  valueRating      Int?
+
+  // Review content
+  title       String?
+  comment     String?
+  images      String? // JSON string of image URLs
+
+  // Verification
+  isVerified  Boolean  @default(false)
+  isPublic    Boolean  @default(true)
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user        User     @relation(fields: [userId], references: [id])
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+
+  @@map("reviews")
+}
+
+// ============================================================================
+// USER PREFERENCES AND FAVORITES
+// ============================================================================
+
+model UserFavorite {
+  id        String   @id @default(cuid())
+  userId    String
+  vehicleId String
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, vehicleId])
+  @@map("user_favorites")
+}
+
+// ============================================================================
+// NOTIFICATIONS
+// ============================================================================
+
+model UserNotification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  data      Json?            // Additional data as JSON
+
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  // Relations
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_notifications")
+}
+
+model BookingNotification {
+  id        String           @id @default(cuid())
+  bookingId String
+  type      NotificationType
+  title     String
+  message   String
+  data      Json?
+
+  sentAt    DateTime         @default(now())
+
+  // Relations
+  booking   Booking          @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@map("booking_notifications")
+}
+
+enum NotificationType {
+  BOOKING_CONFIRMED
+  BOOKING_CANCELLED
+  BOOKING_REMINDER
+  PAYMENT_SUCCESSFUL
+  PAYMENT_FAILED
+  VEHICLE_ARRIVING
+  TRIP_STARTED
+  TRIP_COMPLETED
+  REVIEW_REQUEST
+  PROMOTIONAL
+  SYSTEM_UPDATE
+}
+
+// ============================================================================
+// SYSTEM CONFIGURATION
+// ============================================================================
+
+model SystemConfig {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  category    String?
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("system_config")
+}
+
+// ============================================================================
+// ANALYTICS AND TRACKING
+// ============================================================================
+
+model BookingAnalytics {
+  id              String   @id @default(cuid())
+  bookingId       String   @unique
+
+  // Timing metrics
+  searchToBookingTime    Int? // Minutes from search to booking
+  bookingToStartTime     Int? // Minutes from booking to trip start
+  tripDuration           Int? // Actual trip duration in minutes
+
+  // User behavior
+  searchFiltersUsed      String? // JSON string of filters used during search
+  vehiclesViewed         Int?     // Number of vehicles viewed before booking
+  amenitiesSelected      Int?     // Number of amenities selected
+
+  // Performance metrics
+  responseTime           Int?     // API response time in milliseconds
+  userSatisfactionScore  Int?     // 1-10 scale
+
+  createdAt              DateTime @default(now())
+
+  @@map("booking_analytics")
+}
+
+// ============================================================================
+// INDEXES FOR PERFORMANCE
+// ============================================================================
+
+// Add indexes for frequently queried fields
+// These will be created during migration
+
+// Vehicle search indexes
+// @@index([type, status, location])
+// @@index([category, capacity])
+// @@index([hourlyRate, dailyRate])
+
+// Booking search indexes
+// @@index([userId, status])
+// @@index([vehicleId, startDateTime])
+// @@index([status, createdAt])
+
+// User activity indexes
+// @@index([email])
+// @@index([isActive, role])
+
+// Review and rating indexes
+// @@index([vehicleId, isPublic])
+// @@index([overallRating, createdAt])
