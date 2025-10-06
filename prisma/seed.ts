@@ -1,4 +1,4 @@
-import { PrismaClient, VehicleType, VehicleCategory, VehicleStatus } from '@prisma/client'
+import { PrismaClient, VehicleType, VehicleCategory, VehicleStatus, AmenityCategory } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
@@ -96,50 +96,55 @@ async function main() {
   })
 
   // Create vehicle amenities
-  const amenities = [
+  const amenities: Array<{
+    name: string
+    category: AmenityCategory
+    priceModifier: number
+    description: string
+  }> = [
     // Climate Control
-    { name: 'Air Conditioning', category: 'CLIMATE_CONTROL', priceModifier: 10.0, description: 'Climate controlled environment with cooling' },
-    { name: 'Heating', category: 'CLIMATE_CONTROL', priceModifier: 8.0, description: 'Heating system for winter comfort' },
+    { name: 'Air Conditioning', category: AmenityCategory.CLIMATE_CONTROL, priceModifier: 10.0, description: 'Climate controlled environment with cooling' },
+    { name: 'Heating', category: AmenityCategory.CLIMATE_CONTROL, priceModifier: 8.0, description: 'Heating system for winter comfort' },
     
     // Connectivity
-    { name: 'WiFi', category: 'CONNECTIVITY', priceModifier: 20.0, description: 'High-speed internet access' },
-    { name: 'USB Charging Ports', category: 'CONNECTIVITY', priceModifier: 5.0, description: 'USB ports for device charging' },
-    { name: 'Power Outlets', category: 'CONNECTIVITY', priceModifier: 8.0, description: '220V power outlets' },
+    { name: 'WiFi', category: AmenityCategory.CONNECTIVITY, priceModifier: 20.0, description: 'High-speed internet access' },
+    { name: 'USB Charging Ports', category: AmenityCategory.CONNECTIVITY, priceModifier: 5.0, description: 'USB ports for device charging' },
+    { name: 'Power Outlets', category: AmenityCategory.CONNECTIVITY, priceModifier: 8.0, description: '220V power outlets' },
     
     // Entertainment
-    { name: 'Audio System', category: 'ENTERTAINMENT', priceModifier: 12.0, description: 'Premium sound system' },
-    { name: 'TV Screens', category: 'ENTERTAINMENT', priceModifier: 25.0, description: 'Individual TV screens' },
-    { name: 'Streaming Service', category: 'ENTERTAINMENT', priceModifier: 15.0, description: 'Access to streaming platforms' },
+    { name: 'Audio System', category: AmenityCategory.ENTERTAINMENT, priceModifier: 12.0, description: 'Premium sound system' },
+    { name: 'TV Screens', category: AmenityCategory.ENTERTAINMENT, priceModifier: 25.0, description: 'Individual TV screens' },
+    { name: 'Streaming Service', category: AmenityCategory.ENTERTAINMENT, priceModifier: 15.0, description: 'Access to streaming platforms' },
     
     // Comfort
-    { name: 'Reclining Seats', category: 'COMFORT', priceModifier: 18.0, description: 'Adjustable reclining seats' },
-    { name: 'Extra Legroom', category: 'COMFORT', priceModifier: 22.0, description: 'Additional legroom space' },
-    { name: 'Premium Seating', category: 'COMFORT', priceModifier: 30.0, description: 'Luxury seating with premium materials' },
-    { name: 'Restroom', category: 'COMFORT', priceModifier: 35.0, description: 'Onboard restroom facilities' },
+    { name: 'Reclining Seats', category: AmenityCategory.COMFORT, priceModifier: 18.0, description: 'Adjustable reclining seats' },
+    { name: 'Extra Legroom', category: AmenityCategory.COMFORT, priceModifier: 22.0, description: 'Additional legroom space' },
+    { name: 'Premium Seating', category: AmenityCategory.COMFORT, priceModifier: 30.0, description: 'Luxury seating with premium materials' },
+    { name: 'Restroom', category: AmenityCategory.COMFORT, priceModifier: 35.0, description: 'Onboard restroom facilities' },
     
     // Storage
-    { name: 'Luggage Compartment', category: 'STORAGE', priceModifier: 10.0, description: 'Secure luggage storage' },
-    { name: 'Overhead Bins', category: 'STORAGE', priceModifier: 8.0, description: 'Overhead storage compartments' },
+    { name: 'Luggage Compartment', category: AmenityCategory.STORAGE, priceModifier: 10.0, description: 'Secure luggage storage' },
+    { name: 'Overhead Bins', category: AmenityCategory.STORAGE, priceModifier: 8.0, description: 'Overhead storage compartments' },
     
     // Accessibility
-    { name: 'Wheelchair Access', category: 'ACCESSIBILITY', priceModifier: 0.0, description: 'Wheelchair accessible entry and seating' },
-    { name: 'Priority Seating', category: 'ACCESSIBILITY', priceModifier: 0.0, description: 'Reserved seating for elderly and disabled' },
+    { name: 'Wheelchair Access', category: AmenityCategory.ACCESSIBILITY, priceModifier: 0.0, description: 'Wheelchair accessible entry and seating' },
+    { name: 'Priority Seating', category: AmenityCategory.ACCESSIBILITY, priceModifier: 0.0, description: 'Reserved seating for elderly and disabled' },
     
     // Safety
-    { name: 'GPS Tracking', category: 'SAFETY', priceModifier: 5.0, description: 'Real-time GPS tracking' },
-    { name: 'Emergency Kit', category: 'SAFETY', priceModifier: 3.0, description: 'First aid and emergency equipment' },
+    { name: 'GPS Tracking', category: AmenityCategory.SAFETY, priceModifier: 5.0, description: 'Real-time GPS tracking' },
+    { name: 'Emergency Kit', category: AmenityCategory.SAFETY, priceModifier: 3.0, description: 'First aid and emergency equipment' },
 
     // Bike-specific amenities
-    { name: 'Helmet Included', category: 'SAFETY', priceModifier: 0.0, description: 'Safety helmet provided with rental' },
-    { name: 'Mobile Holder', category: 'CONNECTIVITY', priceModifier: 2.0, description: 'Secure mobile phone holder' },
-    { name: 'Under Seat Storage', category: 'STORAGE', priceModifier: 3.0, description: 'Storage compartment under seat' },
-    { name: 'Electric Start', category: 'COMFORT', priceModifier: 5.0, description: 'Electric start system for easy ignition' },
-    { name: 'LED Headlight', category: 'SAFETY', priceModifier: 8.0, description: 'Bright LED headlight for better visibility' },
-    { name: 'Digital Console', category: 'ENTERTAINMENT', priceModifier: 10.0, description: 'Digital instrument cluster with trip computer' },
-    { name: 'ABS Brakes', category: 'SAFETY', priceModifier: 15.0, description: 'Anti-lock braking system for safer stops' },
-    { name: 'Disc Brakes', category: 'SAFETY', priceModifier: 8.0, description: 'Disc brake system for better stopping power' },
-    { name: 'Alloy Wheels', category: 'COMFORT', priceModifier: 12.0, description: 'Lightweight alloy wheels for better performance' },
-    { name: 'Fuel Injection', category: 'COMFORT', priceModifier: 10.0, description: 'Fuel injection system for better efficiency' },
+    { name: 'Helmet Included', category: AmenityCategory.SAFETY, priceModifier: 0.0, description: 'Safety helmet provided with rental' },
+    { name: 'Mobile Holder', category: AmenityCategory.CONNECTIVITY, priceModifier: 2.0, description: 'Secure mobile phone holder' },
+    { name: 'Under Seat Storage', category: AmenityCategory.STORAGE, priceModifier: 3.0, description: 'Storage compartment under seat' },
+    { name: 'Electric Start', category: AmenityCategory.COMFORT, priceModifier: 5.0, description: 'Electric start system for easy ignition' },
+    { name: 'LED Headlight', category: AmenityCategory.SAFETY, priceModifier: 8.0, description: 'Bright LED headlight for better visibility' },
+    { name: 'Digital Console', category: AmenityCategory.ENTERTAINMENT, priceModifier: 10.0, description: 'Digital instrument cluster with trip computer' },
+    { name: 'ABS Brakes', category: AmenityCategory.SAFETY, priceModifier: 15.0, description: 'Anti-lock braking system for safer stops' },
+    { name: 'Disc Brakes', category: AmenityCategory.SAFETY, priceModifier: 8.0, description: 'Disc brake system for better stopping power' },
+    { name: 'Alloy Wheels', category: AmenityCategory.COMFORT, priceModifier: 12.0, description: 'Lightweight alloy wheels for better performance' },
+    { name: 'Fuel Injection', category: AmenityCategory.COMFORT, priceModifier: 10.0, description: 'Fuel injection system for better efficiency' },
   ]
 
   for (const amenity of amenities) {
