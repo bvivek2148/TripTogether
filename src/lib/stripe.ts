@@ -2,15 +2,18 @@ import Stripe from 'stripe'
 import { loadStripe } from '@stripe/stripe-js'
 
 // Server-side Stripe instance
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-06-20',
-})
+export const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2024-06-20',
+    })
+  : null
 
 // Client-side Stripe instance
 let stripePromise: Promise<Stripe | null>
 export const getStripe = () => {
   if (!stripePromise) {
-    stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+    const key = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+    stripePromise = key ? loadStripe(key) : Promise.resolve(null)
   }
   return stripePromise
 }
@@ -21,6 +24,9 @@ export const createPaymentIntent = async (
   currency: string = 'inr',
   metadata: Record<string, string> = {}
 ): Promise<Stripe.PaymentIntent> => {
+  if (!stripe) {
+    throw new Error('Stripe is not configured')
+  }
   return await stripe.paymentIntents.create({
     amount: Math.round(amount * 100), // Convert to paise (smallest unit of INR)
     currency,
