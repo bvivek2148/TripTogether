@@ -96,11 +96,11 @@ export default function AboutPage() {
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Our Story</h2>
               <p className="text-lg text-gray-600 mb-6">
                 Founded with a vision to revolutionize transportation in India, TripTogether was born from the understanding 
-                that every journey matters. Whether it's a daily commute, a family vacation, or a corporate event, we believe 
+                that every journey matters. Whether it&apos;s a daily commute, a family vacation, or a corporate event, we believe 
                 that reliable transportation should be accessible to everyone.
               </p>
               <p className="text-lg text-gray-600">
-                Starting from major metropolitan cities, we've expanded our services across India, building a network of 
+                Starting from major metropolitan cities, we&apos;ve expanded our services across India, building a network of 
                 trusted drivers and well-maintained vehicles to serve millions of travelers with dedication and care.
               </p>
             </div>
@@ -129,7 +129,7 @@ export default function AboutPage() {
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Vision</h3>
               <p className="text-gray-600">
-                To become India's most trusted transportation platform, setting new standards for customer service, 
+                To become India&apos;s most trusted transportation platform, setting new standards for customer service, 
                 safety, and innovation while contributing to sustainable and inclusive mobility solutions.
               </p>
             </div>
