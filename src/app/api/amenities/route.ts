@@ -21,10 +21,10 @@ const searchSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const params = Object.fromEntries(searchParams.entries())
+    const params: any = Object.fromEntries(searchParams.entries())
     
     // Convert string boolean to boolean
-    if (params.isActive) {
+    if (params.isActive !== undefined) {
       params.isActive = params.isActive === 'true'
     }
 
