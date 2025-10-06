@@ -11,6 +11,7 @@ export default function NotFound() {
         <div className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
 
+      {/* Use static string for backUrl to avoid URL construction issues */}
       <Navigation showBackButton={true} backUrl="/" backLabel="Back to Home" />
       
       <div className="relative flex items-center justify-center min-h-[calc(100vh-80px)] px-4">

@@ -28,7 +28,18 @@ export function Navigation({
 
   const handleBack = () => {
     if (backUrl) {
-      router.push(backUrl)
+      // Ensure backUrl is a valid URL or path
+      try {
+        // Only attempt to construct URL if it's a full URL
+        if (backUrl.startsWith('http')) {
+          new URL(backUrl)
+        }
+        router.push(backUrl)
+      } catch (error) {
+        // Fallback to home page if URL is invalid
+        console.error('Invalid URL:', error)
+        router.push('/')
+      }
     } else {
       router.back()
     }
