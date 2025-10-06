@@ -12,7 +12,7 @@
 
 **A world-class, enterprise-grade transportation booking platform** built with cutting-edge technology, featuring comprehensive **cab rentals**, **bus hiring**, and **bike rentals** across India.
 
-[🚀 Live Demo](https://triptogether.vercel.app) • [📖 Documentation](docs/) • [🐛 Report Bug](issues/) • [💡 Request Feature](issues/)
+[🚀 Live Demo](https://trip-together-seven.vercel.app) • [📖 Documentation](docs/) • [🐛 Report Bug](issues/) • [💡 Request Feature](issues/)
 
 </div>
 
